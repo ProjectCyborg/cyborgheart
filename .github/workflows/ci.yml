@@ -10,6 +10,25 @@ permissions:
   contents: read
 
 jobs:
+  promotion:
+    name: Main promotion policy
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require development branch source
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          if [[ "$HEAD_REF" != "development" || "$HEAD_REPO" != "$REPOSITORY" ]]; then
+            echo "Pull requests into main must promote the repository's development branch." >&2
+            echo "head_ref=$HEAD_REF" >&2
+            echo "head_repo=$HEAD_REPO" >&2
+            echo "repository=$REPOSITORY" >&2
+            exit 1
+          fi
+
   main:
     name: Main full gates
     if: github.ref_name == 'main' || github.base_ref == 'main'
