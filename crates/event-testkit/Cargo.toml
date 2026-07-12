@@ -1,0 +1,19 @@
+[package]
+name = "cyborg-heart-event-testkit"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "Fixture loading and validation testkit for CyborgHeart event application"
+repository = "https://github.com/ProjectCyborg/cyborgheart"
+
+[dependencies]
+cyborg-heart-event-application = { version = "0.1.0", path = "../event-application" }
+jsonschema.workspace = true
+ruma.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+
+[lints]
+workspace = true

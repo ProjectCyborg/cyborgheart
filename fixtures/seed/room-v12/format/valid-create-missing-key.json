@@ -1,0 +1,103 @@
+{
+  "fixture_schema_version": 1,
+  "id": "room_v12.valid_create_missing_key",
+  "title": "A valid create event can require signing keys",
+  "description": "The candidate contains a required signature but the immutable snapshot contains no matching public key fact.",
+  "status": "active",
+  "minimum_stage": "verified-intake",
+  "matrix": {
+    "spec_version": "1.19",
+    "room_version": "12",
+    "references": [
+      "https://spec.matrix.org/v1.19/rooms/v12/#event-format",
+      "https://spec.matrix.org/v1.19/server-server-api/#validating-hashes-and-signatures-on-received-events"
+    ]
+  },
+  "provenance": {
+    "kind": "authored",
+    "source": "CyborgHeart pre-Codex seed",
+    "license": "MIT OR Apache-2.0"
+  },
+  "input": {
+    "mode": "canonical-object",
+    "candidate": {
+      "auth_events": [],
+      "content": {
+        "room_version": "12"
+      },
+      "depth": 0,
+      "hashes": {
+        "sha256": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      },
+      "origin_server_ts": 1,
+      "prev_events": [],
+      "sender": "@alice:example.org",
+      "signatures": {
+        "example.org": {
+          "ed25519:1": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        }
+      },
+      "state_key": "",
+      "type": "m.room.create"
+    },
+    "asserted_event_id": null,
+    "room_version": "12",
+    "provenance": "federated",
+    "key_validity_reference_ts": 1,
+    "options": {
+      "evidence_level": "standard"
+    }
+  },
+  "facts": {
+    "events": [],
+    "state_after": [],
+    "current_room_state": null,
+    "signing_keys": [],
+    "policy_recommendations": []
+  },
+  "budget": {
+    "canonical_json_bytes": 65535,
+    "events_inspected": 64,
+    "state_entries_inspected": 256,
+    "auth_events_inspected": 64,
+    "auth_chain_edges": 512,
+    "graph_edges": 512,
+    "signature_verifications": 16,
+    "state_resolution_steps": 1024
+  },
+  "expect": {
+    "kind": "needs-dependencies",
+    "code": "need.signing_keys",
+    "stage": "signer_discovery",
+    "details": {
+      "missing_key_fact": true
+    },
+    "dependencies": [
+      {
+        "code": "need.signing_keys",
+        "stage": "signer_discovery",
+        "details": {
+          "server": "example.org",
+          "key_ids": [
+            "ed25519:1"
+          ],
+          "event_origin_server_ts": 1,
+          "key_validity_reference_ts": 1
+        }
+      }
+    ],
+    "consequences": [],
+    "work": {
+      "max": {
+        "canonical_json_bytes": 65535,
+        "events_inspected": 1,
+        "state_entries_inspected": 0,
+        "auth_events_inspected": 0,
+        "auth_chain_edges": 0,
+        "graph_edges": 0,
+        "signature_verifications": 0,
+        "state_resolution_steps": 0
+      }
+    }
+  }
+}

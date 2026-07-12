@@ -1,0 +1,33 @@
+# Rust build output
+/target/
+**/*.rs.bk
+
+# Coverage and local report output
+/coverage/
+/tarpaulin-report.html
+/cobertura.xml
+/lcov.info
+
+# Local editor and IDE state
+.zed/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# Logs and temporary files
+*.log
+*.tmp
+/tmp/
+/temp/
+
+# macOS and filesystem noise
+.DS_Store
+.AppleDouble
+.LSOverride

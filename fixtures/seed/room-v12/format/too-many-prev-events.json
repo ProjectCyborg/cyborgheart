@@ -1,0 +1,117 @@
+{
+  "fixture_schema_version": 1,
+  "id": "room_v12.too_many_prev_events",
+  "title": "More than twenty predecessors is invalid",
+  "description": "A room-version-12 PDU with twenty-one predecessor event IDs exceeds the event-format limit.",
+  "status": "active",
+  "minimum_stage": "verified-intake",
+  "matrix": {
+    "spec_version": "1.19",
+    "room_version": "12",
+    "references": [
+      "https://spec.matrix.org/v1.19/rooms/v12/#event-format"
+    ]
+  },
+  "provenance": {
+    "kind": "authored",
+    "source": "CyborgHeart pre-Codex seed",
+    "license": "MIT OR Apache-2.0"
+  },
+  "input": {
+    "mode": "canonical-object",
+    "candidate": {
+      "auth_events": [
+        "$BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
+      ],
+      "content": {
+        "body": "hello",
+        "msgtype": "m.text"
+      },
+      "depth": 2,
+      "hashes": {
+        "sha256": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      },
+      "origin_server_ts": 2,
+      "prev_events": [
+        "$0000000000000000000000000000000000000000000",
+        "$0000000000000000000000000000000000000000001",
+        "$0000000000000000000000000000000000000000002",
+        "$0000000000000000000000000000000000000000003",
+        "$0000000000000000000000000000000000000000004",
+        "$0000000000000000000000000000000000000000005",
+        "$0000000000000000000000000000000000000000006",
+        "$0000000000000000000000000000000000000000007",
+        "$0000000000000000000000000000000000000000008",
+        "$0000000000000000000000000000000000000000009",
+        "$0000000000000000000000000000000000000000010",
+        "$0000000000000000000000000000000000000000011",
+        "$0000000000000000000000000000000000000000012",
+        "$0000000000000000000000000000000000000000013",
+        "$0000000000000000000000000000000000000000014",
+        "$0000000000000000000000000000000000000000015",
+        "$0000000000000000000000000000000000000000016",
+        "$0000000000000000000000000000000000000000017",
+        "$0000000000000000000000000000000000000000018",
+        "$0000000000000000000000000000000000000000019",
+        "$0000000000000000000000000000000000000000020"
+      ],
+      "room_id": "!DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+      "sender": "@alice:example.org",
+      "signatures": {
+        "example.org": {
+          "ed25519:1": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        }
+      },
+      "type": "m.room.message"
+    },
+    "asserted_event_id": null,
+    "room_version": "12",
+    "provenance": "federated",
+    "key_validity_reference_ts": 1,
+    "options": {
+      "evidence_level": "standard"
+    }
+  },
+  "facts": {
+    "events": [],
+    "state_after": [],
+    "current_room_state": null,
+    "signing_keys": [],
+    "policy_recommendations": []
+  },
+  "budget": {
+    "canonical_json_bytes": 65535,
+    "events_inspected": 64,
+    "state_entries_inspected": 256,
+    "auth_events_inspected": 64,
+    "auth_chain_edges": 512,
+    "graph_edges": 512,
+    "signature_verifications": 16,
+    "state_resolution_steps": 1024
+  },
+  "expect": {
+    "kind": "complete",
+    "code": "drop.invalid_pdu_format",
+    "stage": "pdu_format",
+    "details": {
+      "field": "prev_events",
+      "maximum": 20,
+      "actual": 21
+    },
+    "dependencies": [],
+    "consequences": [],
+    "work": {
+      "max": {
+        "canonical_json_bytes": 65535,
+        "events_inspected": 1,
+        "state_entries_inspected": 0,
+        "auth_events_inspected": 0,
+        "auth_chain_edges": 0,
+        "graph_edges": 0,
+        "signature_verifications": 0,
+        "state_resolution_steps": 0
+      }
+    },
+    "disposition": "dropped"
+  }
+}

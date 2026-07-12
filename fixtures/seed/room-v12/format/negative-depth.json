@@ -1,0 +1,96 @@
+{
+  "fixture_schema_version": 1,
+  "id": "room_v12.negative_depth",
+  "title": "Negative event depth is invalid",
+  "description": "A PDU depth below zero fails room-version event-format validation before signature verification.",
+  "status": "active",
+  "minimum_stage": "verified-intake",
+  "matrix": {
+    "spec_version": "1.19",
+    "room_version": "12",
+    "references": [
+      "https://spec.matrix.org/v1.19/rooms/v12/#event-format"
+    ]
+  },
+  "provenance": {
+    "kind": "authored",
+    "source": "CyborgHeart pre-Codex seed",
+    "license": "MIT OR Apache-2.0"
+  },
+  "input": {
+    "mode": "canonical-object",
+    "candidate": {
+      "auth_events": [
+        "$BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
+      ],
+      "content": {
+        "body": "hello",
+        "msgtype": "m.text"
+      },
+      "depth": -1,
+      "hashes": {
+        "sha256": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      },
+      "origin_server_ts": 2,
+      "prev_events": [
+        "$CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
+      ],
+      "room_id": "!DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+      "sender": "@alice:example.org",
+      "signatures": {
+        "example.org": {
+          "ed25519:1": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        }
+      },
+      "type": "m.room.message"
+    },
+    "asserted_event_id": null,
+    "room_version": "12",
+    "provenance": "federated",
+    "key_validity_reference_ts": 1,
+    "options": {
+      "evidence_level": "standard"
+    }
+  },
+  "facts": {
+    "events": [],
+    "state_after": [],
+    "current_room_state": null,
+    "signing_keys": [],
+    "policy_recommendations": []
+  },
+  "budget": {
+    "canonical_json_bytes": 65535,
+    "events_inspected": 64,
+    "state_entries_inspected": 256,
+    "auth_events_inspected": 64,
+    "auth_chain_edges": 512,
+    "graph_edges": 512,
+    "signature_verifications": 16,
+    "state_resolution_steps": 1024
+  },
+  "expect": {
+    "kind": "complete",
+    "code": "drop.invalid_pdu_format",
+    "stage": "pdu_format",
+    "details": {
+      "field": "depth",
+      "reason": "negative"
+    },
+    "dependencies": [],
+    "consequences": [],
+    "work": {
+      "max": {
+        "canonical_json_bytes": 65535,
+        "events_inspected": 1,
+        "state_entries_inspected": 0,
+        "auth_events_inspected": 0,
+        "auth_chain_edges": 0,
+        "graph_edges": 0,
+        "signature_verifications": 0,
+        "state_resolution_steps": 0
+      }
+    },
+    "disposition": "dropped"
+  }
+}

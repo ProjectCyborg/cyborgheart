@@ -1,0 +1,92 @@
+{
+  "fixture_schema_version": 1,
+  "id": "capability.unsupported_room_version",
+  "title": "Unsupported room version is a capability error",
+  "description": "Room version 11 is rejected by the initial capability boundary rather than classified as a dropped room-version-12 event.",
+  "status": "active",
+  "minimum_stage": "contract",
+  "matrix": {
+    "spec_version": "1.19",
+    "room_version": "11",
+    "references": [
+      "https://spec.matrix.org/v1.19/rooms/"
+    ]
+  },
+  "provenance": {
+    "kind": "authored",
+    "source": "CyborgHeart pre-Codex seed",
+    "license": "MIT OR Apache-2.0"
+  },
+  "input": {
+    "mode": "canonical-object",
+    "candidate": {
+      "auth_events": [],
+      "content": {
+        "room_version": "12"
+      },
+      "depth": 0,
+      "hashes": {
+        "sha256": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      },
+      "origin_server_ts": 1,
+      "prev_events": [],
+      "sender": "@alice:example.org",
+      "signatures": {
+        "example.org": {
+          "ed25519:1": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        }
+      },
+      "state_key": "",
+      "type": "m.room.create"
+    },
+    "asserted_event_id": null,
+    "room_version": "11",
+    "provenance": "federated",
+    "key_validity_reference_ts": 1,
+    "options": {
+      "evidence_level": "standard"
+    }
+  },
+  "facts": {
+    "events": [],
+    "state_after": [],
+    "current_room_state": null,
+    "signing_keys": [],
+    "policy_recommendations": []
+  },
+  "budget": {
+    "canonical_json_bytes": 65535,
+    "events_inspected": 64,
+    "state_entries_inspected": 256,
+    "auth_events_inspected": 64,
+    "auth_chain_edges": 512,
+    "graph_edges": 512,
+    "signature_verifications": 16,
+    "state_resolution_steps": 1024
+  },
+  "expect": {
+    "kind": "capability-error",
+    "code": "capability.unsupported_room_version",
+    "stage": "room_version_admission",
+    "details": {
+      "requested": "11",
+      "supported": [
+        "12"
+      ]
+    },
+    "dependencies": [],
+    "consequences": [],
+    "work": {
+      "max": {
+        "canonical_json_bytes": 65535,
+        "events_inspected": 1,
+        "state_entries_inspected": 0,
+        "auth_events_inspected": 0,
+        "auth_chain_edges": 0,
+        "graph_edges": 0,
+        "signature_verifications": 0,
+        "state_resolution_steps": 0
+      }
+    }
+  }
+}
