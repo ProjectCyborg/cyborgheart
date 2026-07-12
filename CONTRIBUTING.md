@@ -90,6 +90,8 @@ The implementation repository may use Rust 1.97's Cargo warning control in CI, b
 
 The development gate must stay fast enough for frequent integration but strict enough that obvious Rust, lint, and fixture failures do not accumulate. Changes that affect dependencies, public API shape, support claims, release behavior, documentation contracts, or platform assumptions should still run the full verifier locally before merge.
 
+Normal changes must be proposed as pull requests into `development`. Promotion to `main` must be a pull request from the repository's `development` branch into `main`; direct feature-branch pull requests to `main` are rejected by CI policy.
+
 The scheduled security workflow runs dependency policy independently so advisories are still checked even when no `main` change is in flight.
 
 ## Protocol-support changes
