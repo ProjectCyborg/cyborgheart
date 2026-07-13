@@ -47,6 +47,7 @@ Read:
 - [`../fixtures/schema/fixture.schema.json`](../fixtures/schema/fixture.schema.json)
 - [`foundational/SPECIFICATION-MAP.md`](./foundational/SPECIFICATION-MAP.md)
 - [`foundational/DECISION-CODES.md`](./foundational/DECISION-CODES.md)
+- [`adr/0005-pre-release-contract-corrections.md`](./adr/0005-pre-release-contract-corrections.md) for the checked halt and Policy Server fixture correction
 
 Fixtures are executable protocol claims. Adding a fixture does not widen Matrix support by itself.
 
