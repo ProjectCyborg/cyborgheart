@@ -11,6 +11,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use cyborg_heart_event_application::EventProvenance;
 use ruma::{CanonicalJsonObject, CanonicalJsonValue};
 use serde::Deserialize;
 use serde_json::{Map, Value};
@@ -19,6 +20,7 @@ use serde_json::{Map, Value};
 pub const SUPPORTED_FIXTURE_SCHEMA_VERSION: u64 = 1;
 
 /// Fixture lifecycle maturity.
+#[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub enum FixtureStage {
@@ -33,6 +35,7 @@ pub enum FixtureStage {
 }
 
 /// Fixture authoring status.
+#[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub enum FixtureStatus {
@@ -43,6 +46,7 @@ pub enum FixtureStatus {
 }
 
 /// Whether a fixture is executable for an implemented stage.
+#[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum FixtureExecutionState {
     /// Fixture is active and its minimum stage is available.
@@ -57,6 +61,7 @@ pub enum FixtureExecutionState {
 }
 
 /// Expected fixture result kind.
+#[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub enum ExpectedKind {
@@ -75,6 +80,7 @@ pub enum ExpectedKind {
 }
 
 /// Complete-decision disposition in fixture expectations.
+#[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub enum ExpectedDisposition {
@@ -117,7 +123,7 @@ impl FixtureSuite {
     }
 }
 
-/// One schema-valid fixture and selected typed metadata.
+/// One schema-valid fixture with complete typed contract retention.
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 pub struct Fixture {
     #[serde(skip)]
@@ -125,12 +131,17 @@ pub struct Fixture {
     fixture_schema_version: u64,
     id: String,
     title: String,
+    description: String,
     status: FixtureStatus,
     minimum_stage: FixtureStage,
     matrix: MatrixMetadata,
+    provenance: FixtureProvenance,
     input: FixtureInput,
+    facts: FixtureFacts,
     budget: BTreeMap<String, u64>,
     expect: FixtureExpectation,
+    #[serde(default)]
+    notes: Vec<String>,
 }
 
 impl Fixture {
@@ -138,6 +149,12 @@ impl Fixture {
     #[must_use]
     pub fn source_path(&self) -> &Path {
         &self.source_path
+    }
+
+    /// Declared fixture schema version.
+    #[must_use]
+    pub const fn schema_version(&self) -> u64 {
+        self.fixture_schema_version
     }
 
     /// Stable fixture ID.
@@ -150,6 +167,12 @@ impl Fixture {
     #[must_use]
     pub fn title(&self) -> &str {
         &self.title
+    }
+
+    /// Human-readable fixture description.
+    #[must_use]
+    pub fn description(&self) -> &str {
+        &self.description
     }
 
     /// Fixture status.
@@ -170,10 +193,22 @@ impl Fixture {
         &self.matrix
     }
 
+    /// Source provenance and licensing metadata.
+    #[must_use]
+    pub const fn provenance(&self) -> &FixtureProvenance {
+        &self.provenance
+    }
+
     /// Fixture input metadata.
     #[must_use]
     pub const fn input(&self) -> &FixtureInput {
         &self.input
+    }
+
+    /// Immutable facts supplied to future evaluation.
+    #[must_use]
+    pub const fn facts(&self) -> &FixtureFacts {
+        &self.facts
     }
 
     /// Declared evaluation budget.
@@ -186,6 +221,12 @@ impl Fixture {
     #[must_use]
     pub const fn expectation(&self) -> &FixtureExpectation {
         &self.expect
+    }
+
+    /// Optional author and reviewer notes.
+    #[must_use]
+    pub fn notes(&self) -> &[String] {
+        &self.notes
     }
 
     /// Returns this fixture's execution state for the highest implemented stage.
@@ -234,13 +275,111 @@ impl MatrixMetadata {
     }
 }
 
-/// Fixture candidate input mode and selected fields.
+/// Provenance kind for fixture source material.
+#[non_exhaustive]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum FixtureSourceKind {
+    /// Authored by the CyborgHeart project.
+    Authored,
+    /// Derived from the Matrix specification.
+    MatrixSpec,
+    /// Derived from Ruma behavior or vectors.
+    Ruma,
+    /// Added from a project regression.
+    Regression,
+}
+
+/// Source and licensing metadata for a fixture.
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+pub struct FixtureProvenance {
+    kind: FixtureSourceKind,
+    source: String,
+    license: String,
+}
+
+impl FixtureProvenance {
+    /// Fixture source kind.
+    #[must_use]
+    pub const fn kind(&self) -> FixtureSourceKind {
+        self.kind
+    }
+
+    /// Human-readable source description.
+    #[must_use]
+    pub fn source(&self) -> &str {
+        &self.source
+    }
+
+    /// License or reuse terms.
+    #[must_use]
+    pub fn license(&self) -> &str {
+        &self.license
+    }
+}
+
+/// How the candidate entered the host system in a fixture.
+#[non_exhaustive]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum FixtureInputProvenance {
+    /// Received from a remote Matrix server.
+    Federated,
+    /// Constructed locally by a future command runtime.
+    LocallyConstructed,
+    /// Re-evaluated from retained data.
+    Replay,
+    /// Supplied by an import or migration path.
+    Import,
+}
+
+impl FixtureInputProvenance {
+    /// Maps fixture vocabulary into the public event-application contract.
+    #[must_use]
+    pub const fn event_provenance(self) -> EventProvenance {
+        match self {
+            Self::Federated => EventProvenance::Federated,
+            Self::LocallyConstructed => EventProvenance::LocallyConstructed,
+            Self::Replay => EventProvenance::Replay,
+            Self::Import => EventProvenance::Import,
+        }
+    }
+}
+
+/// Evidence volume selected by a fixture.
+#[non_exhaustive]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum FixtureEvidenceLevel {
+    /// Standard public evidence.
+    Standard,
+}
+
+/// Evaluation options retained from a fixture.
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+pub struct FixtureEvaluationOptions {
+    evidence_level: FixtureEvidenceLevel,
+}
+
+impl FixtureEvaluationOptions {
+    /// Requested evidence level.
+    #[must_use]
+    pub const fn evidence_level(&self) -> FixtureEvidenceLevel {
+        self.evidence_level
+    }
+}
+
+/// Fixture candidate input and complete explicit evaluation metadata.
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 pub struct FixtureInput {
     mode: InputMode,
     raw_json: Option<String>,
     candidate: Option<Map<String, Value>>,
+    asserted_event_id: Option<String>,
     room_version: String,
+    provenance: FixtureInputProvenance,
+    key_validity_reference_ts: u64,
+    options: Option<FixtureEvaluationOptions>,
 }
 
 impl FixtureInput {
@@ -262,10 +401,34 @@ impl FixtureInput {
         self.candidate.as_ref()
     }
 
+    /// Optional externally asserted event ID.
+    #[must_use]
+    pub fn asserted_event_id(&self) -> Option<&str> {
+        self.asserted_event_id.as_deref()
+    }
+
     /// External room version in the fixture input.
     #[must_use]
     pub fn room_version(&self) -> &str {
         &self.room_version
+    }
+
+    /// Candidate provenance.
+    #[must_use]
+    pub const fn provenance(&self) -> FixtureInputProvenance {
+        self.provenance
+    }
+
+    /// Frozen signing-key validity reference timestamp.
+    #[must_use]
+    pub const fn key_validity_reference_ts(&self) -> u64 {
+        self.key_validity_reference_ts
+    }
+
+    /// Explicit evaluation options when provided.
+    #[must_use]
+    pub const fn options(&self) -> Option<&FixtureEvaluationOptions> {
+        self.options.as_ref()
     }
 
     /// Converts the fixture input into Matrix canonical JSON.
@@ -296,6 +459,7 @@ impl FixtureInput {
 }
 
 /// Fixture input mode.
+#[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub enum InputMode {
@@ -305,6 +469,264 @@ pub enum InputMode {
     CanonicalObject,
 }
 
+/// Disposition assigned to an immutable event fact.
+#[non_exhaustive]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum FactDisposition {
+    /// Previously accepted event.
+    Accepted,
+    /// Previously rejected event.
+    Rejected,
+    /// Previously soft-failed event.
+    SoftFailed,
+    /// Event has not yet been evaluated.
+    Unevaluated,
+}
+
+/// One immutable event fact.
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+pub struct EventFact {
+    event_id: String,
+    event: Map<String, Value>,
+    disposition: FactDisposition,
+}
+
+impl EventFact {
+    /// Event identifier.
+    #[must_use]
+    pub fn event_id(&self) -> &str {
+        &self.event_id
+    }
+
+    /// Canonicalizable event object.
+    #[must_use]
+    pub const fn event(&self) -> &Map<String, Value> {
+        &self.event
+    }
+
+    /// Previously known event disposition.
+    #[must_use]
+    pub const fn disposition(&self) -> FactDisposition {
+        self.disposition
+    }
+}
+
+/// State tuple entry retained by fixture facts.
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+pub struct StateEntry {
+    #[serde(rename = "type")]
+    event_type: String,
+    state_key: String,
+    event_id: String,
+}
+
+impl StateEntry {
+    /// Event type in the state tuple.
+    #[must_use]
+    pub fn event_type(&self) -> &str {
+        &self.event_type
+    }
+
+    /// State key in the state tuple.
+    #[must_use]
+    pub fn state_key(&self) -> &str {
+        &self.state_key
+    }
+
+    /// Event identifier stored at the tuple.
+    #[must_use]
+    pub fn event_id(&self) -> &str {
+        &self.event_id
+    }
+}
+
+/// Historical state-after fact for an event.
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+pub struct StateAfterFact {
+    event_id: String,
+    entries: Vec<StateEntry>,
+}
+
+impl StateAfterFact {
+    /// Event whose state-after map is retained.
+    #[must_use]
+    pub fn event_id(&self) -> &str {
+        &self.event_id
+    }
+
+    /// State map entries.
+    #[must_use]
+    pub fn entries(&self) -> &[StateEntry] {
+        &self.entries
+    }
+}
+
+/// Frozen current-room-state fact.
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+pub struct CurrentRoomStateFact {
+    room_id: String,
+    revision: String,
+    entries: Vec<StateEntry>,
+}
+
+impl CurrentRoomStateFact {
+    /// Room identifier.
+    #[must_use]
+    pub fn room_id(&self) -> &str {
+        &self.room_id
+    }
+
+    /// Host-supplied immutable revision token.
+    #[must_use]
+    pub fn revision(&self) -> &str {
+        &self.revision
+    }
+
+    /// Current state entries.
+    #[must_use]
+    pub fn entries(&self) -> &[StateEntry] {
+        &self.entries
+    }
+}
+
+/// Server signing-key fact.
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+pub struct SigningKeyFact {
+    server: String,
+    key_id: String,
+    public_key: String,
+    valid_from_ts: Option<u64>,
+    valid_until_ts: Option<u64>,
+}
+
+impl SigningKeyFact {
+    /// Signing server.
+    #[must_use]
+    pub fn server(&self) -> &str {
+        &self.server
+    }
+
+    /// Matrix key identifier.
+    #[must_use]
+    pub fn key_id(&self) -> &str {
+        &self.key_id
+    }
+
+    /// Encoded public key.
+    #[must_use]
+    pub fn public_key(&self) -> &str {
+        &self.public_key
+    }
+
+    /// Optional validity start timestamp.
+    #[must_use]
+    pub const fn valid_from_ts(&self) -> Option<u64> {
+        self.valid_from_ts
+    }
+
+    /// Optional validity end timestamp.
+    #[must_use]
+    pub const fn valid_until_ts(&self) -> Option<u64> {
+        self.valid_until_ts
+    }
+}
+
+/// Host-supplied result of a Policy Server recommendation acquisition attempt.
+#[non_exhaustive]
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+#[serde(tag = "kind", rename_all = "kebab-case")]
+pub enum PolicyRecommendationOutcome {
+    /// Signature material that the event engine must validate itself.
+    SignatureMaterial {
+        /// Server that supplied the recommendation signature.
+        server: String,
+        /// Matrix key identifier for the signature.
+        key_id: String,
+        /// Encoded signature bytes.
+        signature: String,
+    },
+    /// The required acquisition attempt completed without recommendation material.
+    FinalUnavailable,
+}
+
+/// Policy Server recommendation fact bound to an event and policy configuration.
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+pub struct PolicyRecommendationFact {
+    event_id: String,
+    policy_event_id: String,
+    policy_fingerprint: String,
+    outcome: PolicyRecommendationOutcome,
+}
+
+impl PolicyRecommendationFact {
+    /// Candidate event identifier.
+    #[must_use]
+    pub fn event_id(&self) -> &str {
+        &self.event_id
+    }
+
+    /// Active policy event identifier.
+    #[must_use]
+    pub fn policy_event_id(&self) -> &str {
+        &self.policy_event_id
+    }
+
+    /// Fingerprint binding the fact to the frozen policy configuration.
+    #[must_use]
+    pub fn policy_fingerprint(&self) -> &str {
+        &self.policy_fingerprint
+    }
+
+    /// Signature material or terminal acquisition outcome.
+    #[must_use]
+    pub const fn outcome(&self) -> &PolicyRecommendationOutcome {
+        &self.outcome
+    }
+}
+
+/// Complete immutable fact snapshot retained by a fixture.
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+pub struct FixtureFacts {
+    events: Vec<EventFact>,
+    state_after: Vec<StateAfterFact>,
+    current_room_state: Option<CurrentRoomStateFact>,
+    signing_keys: Vec<SigningKeyFact>,
+    policy_recommendations: Vec<PolicyRecommendationFact>,
+}
+
+impl FixtureFacts {
+    /// Event facts.
+    #[must_use]
+    pub fn events(&self) -> &[EventFact] {
+        &self.events
+    }
+
+    /// Historical state-after facts.
+    #[must_use]
+    pub fn state_after(&self) -> &[StateAfterFact] {
+        &self.state_after
+    }
+
+    /// Frozen current room state when available.
+    #[must_use]
+    pub const fn current_room_state(&self) -> Option<&CurrentRoomStateFact> {
+        self.current_room_state.as_ref()
+    }
+
+    /// Server signing keys.
+    #[must_use]
+    pub fn signing_keys(&self) -> &[SigningKeyFact] {
+        &self.signing_keys
+    }
+
+    /// Policy Server recommendation facts.
+    #[must_use]
+    pub fn policy_recommendations(&self) -> &[PolicyRecommendationFact] {
+        &self.policy_recommendations
+    }
+}
+
 /// Fixture expected-result metadata.
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 pub struct FixtureExpectation {
@@ -312,6 +734,8 @@ pub struct FixtureExpectation {
     code: String,
     stage: String,
     disposition: Option<ExpectedDisposition>,
+    #[serde(default)]
+    details: Map<String, Value>,
     dependencies: Vec<ExpectedDependency>,
     consequences: Vec<String>,
     work: ExpectedWork,
@@ -342,6 +766,12 @@ impl FixtureExpectation {
         self.disposition
     }
 
+    /// Additional stable expected details.
+    #[must_use]
+    pub const fn details(&self) -> &Map<String, Value> {
+        &self.details
+    }
+
     /// Expected dependency requests.
     #[must_use]
     pub fn dependencies(&self) -> &[ExpectedDependency] {
@@ -366,6 +796,7 @@ impl FixtureExpectation {
 pub struct ExpectedDependency {
     code: String,
     stage: String,
+    details: Map<String, Value>,
 }
 
 impl ExpectedDependency {
@@ -379,6 +810,12 @@ impl ExpectedDependency {
     #[must_use]
     pub fn stage(&self) -> &str {
         &self.stage
+    }
+
+    /// Stable dependency-identifying details.
+    #[must_use]
+    pub const fn details(&self) -> &Map<String, Value> {
+        &self.details
     }
 }
 
@@ -731,14 +1168,20 @@ mod tests {
     }
 
     #[test]
-    fn all_ten_seed_fixtures_validate_and_load() {
+    fn all_discovered_seed_fixtures_validate_and_load() {
+        let discovered = discover_json_files(&repo_root().join("fixtures/seed"))
+            .expect("fixture discovery succeeds");
         let suite = FixtureSuite::load_seed_from_repo_root(repo_root()).expect("fixtures load");
-        assert_eq!(suite.fixtures().len(), 10);
+        assert!(
+            !discovered.is_empty(),
+            "seed fixture corpus must not be empty"
+        );
+        assert_eq!(suite.fixtures().len(), discovered.len());
         assert!(
             suite
                 .fixtures()
                 .iter()
-                .all(|fixture| fixture.fixture_schema_version == 1)
+                .all(|fixture| fixture.schema_version() == SUPPORTED_FIXTURE_SCHEMA_VERSION)
         );
     }
 
@@ -931,5 +1374,81 @@ mod tests {
                 );
             }
         }
+    }
+
+    #[test]
+    fn typed_model_retains_complete_fixture_contract() {
+        let suite = FixtureSuite::load_seed_from_repo_root(repo_root()).expect("fixtures load");
+        let fixture = fixture_by_id(&suite, "capability.unsupported_room_version");
+
+        assert_eq!(fixture.schema_version(), SUPPORTED_FIXTURE_SCHEMA_VERSION);
+        assert!(!fixture.description().is_empty());
+        assert_eq!(fixture.provenance().kind(), FixtureSourceKind::Authored);
+        assert!(!fixture.provenance().source().is_empty());
+        assert!(!fixture.provenance().license().is_empty());
+        assert_eq!(
+            fixture.input().provenance().event_provenance(),
+            EventProvenance::Federated
+        );
+        assert_eq!(fixture.input().key_validity_reference_ts(), 1);
+        assert!(fixture.input().options().is_some());
+        assert!(fixture.facts().events().is_empty());
+        assert!(fixture.facts().state_after().is_empty());
+        assert!(fixture.facts().current_room_state().is_none());
+        assert!(fixture.facts().signing_keys().is_empty());
+        assert!(fixture.facts().policy_recommendations().is_empty());
+        assert_eq!(
+            fixture.expectation().details().get("requested"),
+            Some(&Value::from("11"))
+        );
+    }
+
+    #[test]
+    fn policy_recommendation_requires_engine_verifiable_material() {
+        assert_schema_rejects(
+            fixture_value("capability/unsupported-room-version.json"),
+            |value| {
+                value
+                    .get_mut("facts")
+                    .and_then(Value::as_object_mut)
+                    .and_then(|facts| facts.get_mut("policy_recommendations"))
+                    .and_then(Value::as_array_mut)
+                    .expect("recommendations array")
+                    .push(serde_json::json!({
+                        "event_id": "$candidate:example.org",
+                        "policy_event_id": "$policy:example.org",
+                        "policy_fingerprint": "policy-v1",
+                        "state": "valid"
+                    }));
+            },
+        );
+
+        let mut value = fixture_value("capability/unsupported-room-version.json");
+        value
+            .get_mut("facts")
+            .and_then(Value::as_object_mut)
+            .and_then(|facts| facts.get_mut("policy_recommendations"))
+            .and_then(Value::as_array_mut)
+            .expect("recommendations array")
+            .push(serde_json::json!({
+                "event_id": "$candidate:example.org",
+                "policy_event_id": "$policy:example.org",
+                "policy_fingerprint": "policy-v1",
+                "outcome": {
+                    "kind": "signature-material",
+                    "server": "policy.example.org",
+                    "key_id": "ed25519:policy_server",
+                    "signature": "AAAAAAAA"
+                }
+            }));
+
+        let validator = load_schema_validator();
+        validate_fixture_value(&validator, Path::new("policy-material.json"), &value)
+            .expect("signature material is schema-valid");
+        let fixture: Fixture = serde_json::from_value(value).expect("typed fixture parses");
+        assert!(matches!(
+            fixture.facts().policy_recommendations()[0].outcome(),
+            PolicyRecommendationOutcome::SignatureMaterial { .. }
+        ));
     }
 }

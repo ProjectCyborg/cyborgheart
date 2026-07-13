@@ -49,6 +49,23 @@ This directory is the canonical fixture root for the public repository and must 
 
 ---
 
+## Authoring checklist
+
+Before opening a fixture pull request:
+
+- [ ] keep `fixture_schema_version` at the version required by [`fixture.schema.json`](./schema/fixture.schema.json);
+- [ ] choose a globally unique fixture ID and compare it with the existing [`seed/`](./seed/) corpus;
+- [ ] use synthetic domains, users, keys, signatures, and event identifiers only;
+- [ ] set `status` and `minimum_stage` honestly so unavailable behavior remains staged rather than falsely passing;
+- [ ] cite the applicable Matrix v1.19 and room-version references;
+- [ ] use only registered expected decision, dependency, and consequence codes;
+- [ ] declare conservative input budgets and expected work ceilings;
+- [ ] run `cargo test -p cyborg-heart-event-testkit --locked` and `./scripts/verify.sh --quick`.
+
+A new fixture records an executable claim. It does not expand the repository's Matrix support claim by itself; support changes only through the gate in [`SUPPORTED-SURFACE.md`](../docs/foundational/SUPPORTED-SURFACE.md).
+
+---
+
 ## Discovery
 
 The testkit must:
@@ -168,6 +185,19 @@ For authored fixtures:
 ```
 
 Imported fixtures must preserve their original source and license. Do not copy implementation test data without confirming reuse terms.
+
+---
+
+## Policy Server recommendation facts
+
+A Policy Server recommendation fact never contains a host-asserted `valid` or `invalid` flag.
+
+It contains one of:
+
+- `outcome.kind = "signature-material"` with the server, key ID, and signature bytes that the event engine must validate itself; or
+- `outcome.kind = "final-unavailable"` after the required acquisition attempt completed without usable material.
+
+The fact remains bound to the candidate event, active policy event, and frozen policy fingerprint. Signing keys remain separate immutable facts.
 
 ---
 

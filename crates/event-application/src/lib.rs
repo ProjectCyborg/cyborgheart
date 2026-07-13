@@ -20,8 +20,8 @@ pub use consequences::{
 pub use decision::{
     AcceptedCode, AdmittedDecision, AdmittedOutcome, CapabilityCode, CompleteDecision,
     DecisionCode, DependencyNeed, Disposition, DropCode, DroppedDecision, EvaluationFault,
-    EvaluationResult, FaultCode, Halt, HaltCode, InputCode, LifecycleStage, RejectionCode,
-    SoftFailureCode, known_decision_code,
+    EvaluationResult, FaultCode, Halt, HaltCode, InputCode, InvalidBudgetExceeded, LifecycleStage,
+    RejectionCode, SoftFailureCode, known_decision_code,
 };
 pub use dependencies::{
     Dependency, DependencyCode, DependencyRequest, DependencyRequestBuildError,
