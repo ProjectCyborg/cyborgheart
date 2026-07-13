@@ -38,7 +38,7 @@ jobs:
       - name: Validate transformed tree
         run: |
           cargo fmt --all
-          cargo test --workspace --all-targets --locked
+          cargo test --workspace --all-targets --locked --quiet
           python3 scripts/check-markdown-links.py
 
       - name: Remove one-shot machinery
