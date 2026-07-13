@@ -102,6 +102,10 @@ Local shells should use the pinned Rust toolchain from [`rust-toolchain.toml`](.
 
 `./scripts/verify.sh` automatically installs the pinned `cargo-deny` version when it is missing or mismatched.
 
+## Versioning
+
+The initial crates use one lockstep pre-1.0 workspace version and remain unpublished. See [`VERSIONING.md`](./VERSIONING.md).
+
 ## Architecture decisions
 
 [`docs/adr/`](./docs/adr/) records decisions that govern this repository. An ADR belongs here when it changes this repository's code, public contract, compatibility surface, dependency boundary, or release behavior.
@@ -109,6 +113,8 @@ Local shells should use the pinned Rust toolchain from [`rust-toolchain.toml`](.
 ## Contribution and security
 
 - [`CONTRIBUTING.md`](./CONTRIBUTING.md)
+- [`REVIEWING.md`](./REVIEWING.md)
+- [`VERSIONING.md`](./VERSIONING.md)
 - [`SECURITY.md`](./SECURITY.md)
 - [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md)
 - [`NOTICE.md`](./NOTICE.md)

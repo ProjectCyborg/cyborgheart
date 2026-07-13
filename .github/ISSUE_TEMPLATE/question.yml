@@ -1,0 +1,26 @@
+name: Question
+description: Ask where a change belongs or how to interpret public project policy.
+title: "question: "
+labels: ["needs: decision"]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: What do you need clarified?
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What are you trying to do, and what public files have you already read?
+    validations:
+      required: true
+  - type: textarea
+    id: related
+    attributes:
+      label: Related public documents
+      description: Link README, CONTRIBUTING, SECURITY, foundational docs, ADRs, or issues.
+    validations:
+      required: false

@@ -1,0 +1,60 @@
+name: Protocol behavior
+description: Raise a Matrix or Ruma-sensitive behavior question or defect.
+title: "protocol: "
+labels: ["risk: protocol", "needs: specification"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Protocol-sensitive work may require research before a patch. Security-sensitive findings must follow SECURITY.md instead of a public issue.
+  - type: input
+    id: matrix-section
+    attributes:
+      label: Matrix specification section
+      description: Link to the Matrix v1.19 or room-version-12 section.
+    validations:
+      required: true
+  - type: input
+    id: room-version
+    attributes:
+      label: Room version
+      description: The initial target is room version 12 only.
+      placeholder: "12"
+    validations:
+      required: true
+  - type: input
+    id: spec-map
+    attributes:
+      label: Specification-map IDs
+      description: IDs from docs/foundational/SPECIFICATION-MAP.md when known.
+      placeholder: "MX-AUTH-003, MX-DISP-004"
+    validations:
+      required: false
+  - type: textarea
+    id: ruma
+    attributes:
+      label: Ruma surface
+      description: Relevant Ruma crate, version, API, feature, or gap.
+    validations:
+      required: false
+  - type: textarea
+    id: scenario
+    attributes:
+      label: Canonical minimized event or graph
+      description: Synthetic fixture-shaped input only; do not include private production data.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected dependency, decision, and consequence
+      description: Include decision codes or consequence codes when known.
+    validations:
+      required: true
+  - type: textarea
+    id: support-claim
+    attributes:
+      label: Current support claim affected
+      description: Quote or link to SUPPORTED-SURFACE.md. State if no support claim should change.
+    validations:
+      required: true

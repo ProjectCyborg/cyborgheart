@@ -41,6 +41,18 @@ A protocol or implementation issue should include, when applicable:
 
 Never include real access tokens, private signing keys, secrets, or non-public user data.
 
+## Labels
+
+CyborgHeart uses a small controlled label vocabulary:
+
+- Type: `type: bug`, `type: documentation`, `type: proposal`, `type: test-fixture`, `type: maintenance`
+- Area: `area: event-application`, `area: testkit`, `area: fixtures`, `area: ruma`, `area: docs`, `area: ci-release`
+- Risk: `risk: low`, `risk: protocol`, `risk: public-api`, `risk: security`, `risk: architecture`
+- State: `needs: reproduction`, `needs: specification`, `needs: decision`, `needs: tests`, `blocked`, `ready`
+- Contributor entry: `good first issue`, `help wanted`, `mentored`
+
+`good first issue` is reserved for bounded work with exact acceptance criteria, validation commands, explicit non-goals, and no hidden protocol decision.
+
 ## Pull requests
 
 Keep pull requests focused. The description should state:
@@ -56,6 +68,10 @@ Keep pull requests focused. The description should state:
 - explicit non-goals.
 
 A normative behavior change requires a fixture or property test that fails before the change and passes after it.
+
+Reviewers use [`REVIEWING.md`](./REVIEWING.md) to classify risk, inspect evidence, and decide whether a change is ready.
+
+New contributors should start with a bounded issue that names expected files or search areas, acceptance criteria, validation commands, explicit non-goals, and the relevant architecture constraints. Do not treat protocol-sensitive work as a first issue unless a maintainer has already supplied the specification mapping and evidence target.
 
 ## Required checks
 
@@ -93,6 +109,14 @@ The development gate must stay fast enough for frequent integration but strict e
 Normal changes must be proposed as pull requests into `development`. Promotion to `main` must be a pull request from the repository's `development` branch into `main`; direct feature-branch pull requests to `main` are rejected by CI policy.
 
 The scheduled security workflow runs dependency policy independently so advisories are still checked even when no `main` change is in flight.
+
+## Versioning and releases
+
+[`VERSIONING.md`](./VERSIONING.md) owns the public pre-1.0 versioning policy.
+
+Versioning changes must explain whether the change is breaking or compatible, whether public API, stable codes, fixture schema, MSRV, platform baseline, or support claims changed, and whether both crates remain unpublished.
+
+Do not add release execution, `v*` tags, GitHub releases, release credentials, or crates.io publishing without a separate reviewed release-readiness cut.
 
 ## Protocol-support changes
 
