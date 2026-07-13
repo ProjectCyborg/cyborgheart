@@ -12,7 +12,7 @@ pub mod evidence;
 pub mod input;
 pub mod room_version;
 
-pub use budget::{EvaluationBudget, WorkDimension, WorkReport};
+pub use budget::{EvaluationBudget, WorkDimension, WorkReport, WorkReportOverflow};
 pub use consequences::{
     ForwardExtremityEffect, HistoricalStateEffect, RedactionEffect, SemanticConsequences,
     VisibilityClass,
