@@ -182,7 +182,10 @@
             "evidence_level": {
               "const": "standard"
             }
-          }
+          },
+          "required": [
+            "evidence_level"
+          ]
         }
       },
       "allOf": [
@@ -362,23 +365,62 @@
         "event_id",
         "policy_event_id",
         "policy_fingerprint",
-        "state"
+        "outcome"
       ],
       "properties": {
         "event_id": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         },
         "policy_event_id": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         },
         "policy_fingerprint": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         },
-        "state": {
-          "enum": [
-            "valid",
-            "invalid",
-            "final-unavailable"
+        "outcome": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "server",
+                "key_id",
+                "signature"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "signature-material"
+                },
+                "server": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "key_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "signature": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "final-unavailable"
+                }
+              }
+            }
           ]
         }
       }

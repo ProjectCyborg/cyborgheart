@@ -59,3 +59,4 @@ Do not create ADRs for routine implementation choices, temporary issue ordering,
 - [`0002-room-version-12-only.md`](./0002-room-version-12-only.md)
 - [`0003-ruma-boundary.md`](./0003-ruma-boundary.md)
 - [`0004-structural-public-contract-invariants.md`](./0004-structural-public-contract-invariants.md)
+- [`0005-pre-release-contract-corrections.md`](./0005-pre-release-contract-corrections.md)
