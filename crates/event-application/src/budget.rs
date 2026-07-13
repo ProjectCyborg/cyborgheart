@@ -132,7 +132,9 @@ impl EvaluationBudget {
 
     /// Iterates over configured limits in stable dimension order.
     pub fn iter(&self) -> impl ExactSizeIterator<Item = (WorkDimension, u64)> + '_ {
-        self.limits.iter().map(|(dimension, limit)| (*dimension, *limit))
+        self.limits
+            .iter()
+            .map(|(dimension, limit)| (*dimension, *limit))
     }
 }
 
