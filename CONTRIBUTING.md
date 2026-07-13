@@ -41,6 +41,18 @@ A protocol or implementation issue should include, when applicable:
 
 Never include real access tokens, private signing keys, secrets, or non-public user data.
 
+## Labels
+
+CyborgHeart uses a small controlled label vocabulary:
+
+- Type: `type: bug`, `type: documentation`, `type: proposal`, `type: test-fixture`, `type: maintenance`
+- Area: `area: event-application`, `area: testkit`, `area: fixtures`, `area: ruma`, `area: docs`, `area: ci-release`
+- Risk: `risk: low`, `risk: protocol`, `risk: public-api`, `risk: security`, `risk: architecture`
+- State: `needs: reproduction`, `needs: specification`, `needs: decision`, `needs: tests`, `blocked`, `ready`
+- Contributor entry: `good first issue`, `help wanted`, `mentored`
+
+`good first issue` is reserved for bounded work with exact acceptance criteria, validation commands, explicit non-goals, and no hidden protocol decision.
+
 ## Pull requests
 
 Keep pull requests focused. The description should state:
@@ -56,6 +68,10 @@ Keep pull requests focused. The description should state:
 - explicit non-goals.
 
 A normative behavior change requires a fixture or property test that fails before the change and passes after it.
+
+Reviewers use [`REVIEWING.md`](./REVIEWING.md) to classify risk, inspect evidence, and decide whether a change is ready.
+
+New contributors should start with a bounded issue that names expected files or search areas, acceptance criteria, validation commands, explicit non-goals, and the relevant architecture constraints. Do not treat protocol-sensitive work as a first issue unless a maintainer has already supplied the specification mapping and evidence target.
 
 ## Required checks
 
