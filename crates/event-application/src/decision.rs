@@ -1,5 +1,10 @@
 //! Result, disposition, halt, fault, and stable decision-code types.
 
+use std::{
+    error::Error,
+    fmt::{self, Display},
+};
+
 use crate::{
     DecisionEvidence, DependencyRequestSet, ForwardExtremityEffect, HistoricalStateEffect,
     RedactionEffect, SemanticConsequences, VisibilityClass, WorkDimension,
@@ -807,6 +812,49 @@ pub enum EvaluationResult {
     Halted(Halt),
 }
 
+/// Error returned when a budget-exceeded halt is requested without an exceedance.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct InvalidBudgetExceeded {
+    dimension: WorkDimension,
+    limit: u64,
+    consumed: u64,
+}
+
+impl InvalidBudgetExceeded {
+    /// Work dimension whose values were inconsistent.
+    #[must_use]
+    pub const fn dimension(self) -> WorkDimension {
+        self.dimension
+    }
+
+    /// Configured limit.
+    #[must_use]
+    pub const fn limit(self) -> u64 {
+        self.limit
+    }
+
+    /// Reported consumed amount.
+    #[must_use]
+    pub const fn consumed(self) -> u64 {
+        self.consumed
+    }
+}
+
+impl Display for InvalidBudgetExceeded {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            formatter,
+            "cannot construct {} for {}: consumed {} does not exceed limit {}",
+            HaltCode::BudgetExceeded.as_str(),
+            self.dimension,
+            self.consumed,
+            self.limit
+        )
+    }
+}
+
+impl Error for InvalidBudgetExceeded {}
+
 /// Bounded halt without a Matrix disposition.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Halt {
@@ -819,23 +867,30 @@ pub struct Halt {
 }
 
 impl Halt {
-    /// Creates a bounded halt.
-    #[must_use]
-    pub const fn new(
+    /// Creates a budget-exceeded halt only when consumed work exceeds the limit.
+    pub fn budget_exceeded(
         stage: LifecycleStage,
         dimension: WorkDimension,
         limit: u64,
         consumed: u64,
         evidence: DecisionEvidence,
-    ) -> Self {
-        Self {
+    ) -> Result<Self, InvalidBudgetExceeded> {
+        if consumed <= limit {
+            return Err(InvalidBudgetExceeded {
+                dimension,
+                limit,
+                consumed,
+            });
+        }
+
+        Ok(Self {
             code: HaltCode::BudgetExceeded,
             stage,
             dimension,
             limit,
             consumed,
             evidence,
-        }
+        })
     }
 
     /// Stable halt code.
@@ -1175,5 +1230,32 @@ mod tests {
                 .iter()
                 .all(|code| registry.contains(&DecisionCode::Fault(*code)))
         );
+    }
+
+    #[test]
+    fn budget_halt_requires_an_actual_exceedance() {
+        let error = Halt::budget_exceeded(
+            LifecycleStage::PduFormat,
+            WorkDimension::EventsInspected,
+            5,
+            5,
+            evidence(),
+        )
+        .expect_err("equal consumption is not an exceedance");
+        assert_eq!(error.dimension(), WorkDimension::EventsInspected);
+        assert_eq!(error.limit(), 5);
+        assert_eq!(error.consumed(), 5);
+
+        let halt = Halt::budget_exceeded(
+            LifecycleStage::PduFormat,
+            WorkDimension::EventsInspected,
+            5,
+            6,
+            evidence(),
+        )
+        .expect("consumption above the limit creates a halt");
+        assert_eq!(halt.code(), HaltCode::BudgetExceeded);
+        assert_eq!(halt.limit(), 5);
+        assert_eq!(halt.consumed(), 6);
     }
 }
