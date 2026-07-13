@@ -1,0 +1,51 @@
+name: Bug report
+description: Report incorrect behavior in supported or targeted public repository behavior.
+title: "bug: "
+labels: ["type: bug", "needs: reproduction"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Security-sensitive reports must follow the private process in SECURITY.md. Do not include secrets, private keys, access tokens, personal data, or exploitable details in a public issue.
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      description: Commit SHA, branch, or release identifier.
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed behavior
+      description: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should have happened, and which public contract says so?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimized reproduction
+      description: Include the smallest command, fixture, input, or diff that shows the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: affected-contract
+    attributes:
+      label: Affected public contract
+      description: Link to README, CONTRIBUTING, SECURITY, foundational docs, ADRs, fixture schema, or workflow behavior.
+    validations:
+      required: false
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation attempted
+      description: Commands run and results.
+    validations:
+      required: false

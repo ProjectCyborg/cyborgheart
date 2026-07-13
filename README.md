@@ -109,6 +109,7 @@ Local shells should use the pinned Rust toolchain from [`rust-toolchain.toml`](.
 ## Contribution and security
 
 - [`CONTRIBUTING.md`](./CONTRIBUTING.md)
+- [`REVIEWING.md`](./REVIEWING.md)
 - [`SECURITY.md`](./SECURITY.md)
 - [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md)
 - [`NOTICE.md`](./NOTICE.md)

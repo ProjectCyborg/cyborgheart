@@ -1,0 +1,36 @@
+name: Documentation
+description: Report public documentation that is unclear, stale, or incomplete.
+title: "docs: "
+labels: ["type: documentation", "area: docs"]
+body:
+  - type: textarea
+    id: location
+    attributes:
+      label: Document and section
+      description: Link to the file and heading or line.
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What is unclear, inconsistent, or stale?
+    validations:
+      required: true
+  - type: textarea
+    id: correction
+    attributes:
+      label: Suggested correction
+      description: Keep support-claim changes explicit.
+    validations:
+      required: false
+  - type: dropdown
+    id: support-impact
+    attributes:
+      label: Does this alter a Matrix support claim?
+      options:
+        - "No"
+        - "Unsure"
+        - "Yes"
+    validations:
+      required: true

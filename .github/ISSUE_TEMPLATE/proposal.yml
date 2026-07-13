@@ -1,0 +1,44 @@
+name: Proposal
+description: Propose a bounded change before implementation starts.
+title: "proposal: "
+labels: ["type: proposal", "needs: decision"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A proposal may be accepted as a direction, split into a bounded issue, deferred, or closed as out of scope. Unsupported Matrix behavior usually needs research and evidence before code.
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired outcome
+      description: What user, contributor, or maintainer problem should be solved?
+    validations:
+      required: true
+  - type: textarea
+    id: layer
+    attributes:
+      label: Layer or responsibility affected
+      description: Public docs, fixture/testkit, event-application crate, CI/release, or another area.
+    validations:
+      required: true
+  - type: textarea
+    id: public-authority
+    attributes:
+      label: Public authority
+      description: Link to public documents, ADRs, Matrix sections, Ruma APIs, or issues.
+    validations:
+      required: false
+  - type: textarea
+    id: non-goals
+    attributes:
+      label: Non-goals
+      description: What should this proposal not do?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence or examples
+      description: Include minimized examples, failing cases, or comparable project evidence when available.
+    validations:
+      required: false
