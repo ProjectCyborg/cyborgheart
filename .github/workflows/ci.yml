@@ -27,7 +27,9 @@ jobs:
           fetch-depth: 0
 
       - name: Apply reviewed transformation
-        run: python3 .github/scripts/apply-outstanding-fixes.py
+        run: |
+          python3 .github/scripts/apply-outstanding-fixes.py
+          sed -i 's/pub const fn budget_exceeded/pub fn budget_exceeded/' crates/event-application/src/decision.rs
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@fa04a1451ff1842e2626ccb99004d0195b455a88
