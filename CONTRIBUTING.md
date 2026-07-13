@@ -110,6 +110,14 @@ Normal changes must be proposed as pull requests into `development`. Promotion t
 
 The scheduled security workflow runs dependency policy independently so advisories are still checked even when no `main` change is in flight.
 
+## Versioning and releases
+
+[`VERSIONING.md`](./VERSIONING.md) owns the public pre-1.0 versioning policy.
+
+Versioning changes must explain whether the change is breaking or compatible, whether public API, stable codes, fixture schema, MSRV, platform baseline, or support claims changed, and whether both crates remain unpublished.
+
+Do not add release execution, `v*` tags, GitHub releases, release credentials, or crates.io publishing without a separate reviewed release-readiness cut.
+
 ## Protocol-support changes
 
 A support change normally updates together:
