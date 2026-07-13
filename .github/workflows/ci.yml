@@ -35,11 +35,14 @@ jobs:
           toolchain: 1.97.0
           components: clippy,rustfmt
 
-      - name: Validate transformed tree
-        run: |
-          cargo fmt --all
-          cargo test --workspace --all-targets --locked --quiet
-          python3 scripts/check-markdown-links.py
+      - name: Format transformed tree
+        run: cargo fmt --all
+
+      - name: Test transformed tree
+        run: cargo test --workspace --all-targets --locked --quiet
+
+      - name: Check transformed Markdown links
+        run: python3 scripts/check-markdown-links.py
 
       - name: Remove one-shot machinery
         run: |
