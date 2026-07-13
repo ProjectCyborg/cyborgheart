@@ -18,6 +18,21 @@ Initial crates:
 
 This repository is currently at contract-seeding stage. The Rust workspace is initialized, public domain vocabulary exists, and fixture validation is available; no Matrix room version or event-application lifecycle is supported yet.
 
+## Quick start
+
+From the repository root:
+
+```bash
+rustup show active-toolchain
+./scripts/verify.sh --quick
+cargo test -p cyborg-heart-event-testkit --locked
+cargo doc --workspace --no-deps --locked
+```
+
+The repository pins Rust 1.97.0 through [`rust-toolchain.toml`](./rust-toolchain.toml). `./scripts/verify.sh --help` describes the available verification tiers. The shell script is a convenience wrapper; the individual Cargo commands below remain the portable baseline.
+
+Open one file under [`fixtures/seed/`](./fixtures/seed/) after the quick gate to see how executable protocol claims are recorded.
+
 ## Repository model
 
 CyborgHeart is intended to remain one public Git repository and one virtual Cargo workspace during its early development.
@@ -25,6 +40,7 @@ CyborgHeart is intended to remain one public Git repository and one virtual Carg
 ```text
 cyborgheart/
 ├── README.md
+├── AGENTS.md
 ├── CONTRIBUTING.md
 ├── SECURITY.md
 ├── CODE_OF_CONDUCT.md
@@ -39,6 +55,7 @@ cyborgheart/
 │   ├── schema/
 │   └── seed/
 ├── docs/
+│   ├── README.md
 │   ├── foundational/
 │   └── adr/
 └── .github/
@@ -46,7 +63,11 @@ cyborgheart/
 
 The private sibling repository `cyborgheart-project-ops` may coordinate plans, handoffs, delegation, and internal review. It is not required to understand, build, test, or release this repository and is never the authority for public implementation behavior.
 
-## Reading order
+## Choose a reading path
+
+Use [`docs/README.md`](./docs/README.md) for role-based navigation.
+
+The full foundational order is:
 
 1. [`MANIFESTO.md`](./docs/foundational/MANIFESTO.md)
 2. [`WORKING-THESIS.md`](./docs/foundational/WORKING-THESIS.md)
@@ -74,7 +95,7 @@ cargo test -p cyborg-heart-event-testkit --locked
 
 ## Validation
 
-Run the local verification script:
+Run the full local verifier:
 
 ```bash
 ./scripts/verify.sh
@@ -84,6 +105,12 @@ For the faster development-branch gate:
 
 ```bash
 ./scripts/verify.sh --quick
+```
+
+Check repository-local Markdown file links independently with:
+
+```bash
+python3 scripts/check-markdown-links.py
 ```
 
 The CI command set for the first implementation boundary is:
@@ -100,7 +127,7 @@ cargo deny check
 
 Local shells should use the pinned Rust toolchain from [`rust-toolchain.toml`](./rust-toolchain.toml). If `cargo --version` does not report Rust 1.97.0, run the same commands through `rustup run 1.97.0 cargo ...`.
 
-`./scripts/verify.sh` automatically installs the pinned `cargo-deny` version when it is missing or mismatched.
+`./scripts/verify.sh` announces before installing the pinned `cargo-deny` version when it is missing or mismatched.
 
 ## Versioning
 
