@@ -39,7 +39,11 @@ jobs:
         run: cargo fmt --all
 
       - name: Test transformed tree
-        run: cargo test --workspace --all-targets --locked --quiet
+        run: |
+          if ! cargo test --workspace --all-targets --locked --quiet > /tmp/cyborgheart-tests.log 2>&1; then
+            tail -n 160 /tmp/cyborgheart-tests.log
+            exit 1
+          fi
 
       - name: Check transformed Markdown links
         run: python3 scripts/check-markdown-links.py
