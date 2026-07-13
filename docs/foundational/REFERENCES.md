@@ -2,7 +2,7 @@
 
 **Status:** Canonical source index
 **Purpose:** Keep external authorities, implementation dependencies, and documentation ownership in one place.
-**Last reviewed:** 2026-07-12
+**Last reviewed:** 2026-07-13
 
 This file is the canonical external-source index for the CyborgHeart foundational pack. Individual documents keep inline links only where a specific obligation must be reviewable in place; they should not maintain separate long reference appendices.
 
@@ -17,6 +17,8 @@ CyborgHeart uses this order of authority:
 5. Implementation and fixtures — executable evidence.
 
 When sources appear to disagree, Matrix determines intended protocol behavior, the pinned Ruma release is reproduced, the mismatch is recorded in `RUMA-COVERAGE.md`, and CyborgHeart makes no support claim until the gap is resolved or isolated.
+
+Peer implementations listed below are comparative research inputs only. They do not enter this authority order and cannot establish protocol behavior, validate a CyborgHeart support claim, or replace independent reproduction against Matrix and the pinned Ruma release.
 
 ## 2. Matrix specification
 
@@ -89,7 +91,20 @@ The upstream `main` changelog may document unreleased helpers. CyborgHeart uses 
 
 The first reviewed `Cargo.lock` becomes the operational dependency baseline. Dependency availability does not itself establish CyborgHeart support.
 
-## 4. Rust and Cargo
+## 4. Comparative Matrix homeserver implementations
+
+These projects are useful for implementation comparison, operational lessons, regression discovery, interoperability investigation, and historical context:
+
+- [Conduit](https://conduit.rs/) — the original Rust homeserver lineage.
+- [conduwuit](https://github.com/x86pup/conduwuit) — an archived hard fork of Conduit with substantial implementation divergence.
+- [Continuwuity](https://github.com/continuwuity/continuwuity) — an active community continuation of the conduwuit codebase.
+- [Tuwunel](https://github.com/matrix-construct/tuwunel) — an active Rust homeserver derived from conduwuit.
+
+These links do not designate architectural dependencies, preferred implementations, compatibility authorities, or sources of normative truth. CyborgHeart may study their code, tests, fixtures, incident history, and operational tradeoffs, but any adopted behavior must be independently justified against the Matrix specification and reproduced against the pinned Ruma surface. Project claims about lineage, succession, completeness, stability, or deployment are treated as claims of those projects rather than CyborgHeart findings.
+
+Do not copy implementation behavior merely because multiple homeservers agree. Shared behavior may still be historical, incomplete, accidental, room-version-specific, or inconsistent with the current normative baseline.
+
+## 5. Rust and Cargo
 
 - [Rust 1.97.0 announcement](https://blog.rust-lang.org/2026/07/09/Rust-1.97.0/)
 - [Rust 2024 Edition Guide](https://doc.rust-lang.org/edition-guide/rust-2024/)
@@ -103,7 +118,7 @@ The first reviewed `Cargo.lock` becomes the operational dependency baseline. Dep
 
 The repository’s `rust-toolchain.toml`, `Cargo.toml`, and `Cargo.lock` become operational sources of truth after initialization.
 
-## 5. Security, quality, and conformance
+## 6. Security, quality, and conformance
 
 - [cargo-deny](https://github.com/EmbarkStudios/cargo-deny)
 - [cargo-fuzz](https://github.com/rust-fuzz/cargo-fuzz)
@@ -116,7 +131,7 @@ The repository’s `rust-toolchain.toml`, `Cargo.toml`, and `Cargo.lock` become 
 
 Complement is a later end-to-end homeserver gate. It does not replace the pure event-engine fixture corpus. Unstable MSC behavior is outside the initial supported surface unless adopted explicitly by ADR and support update.
 
-## 6. Identity and legal references
+## 7. Identity and legal references
 
 - [The Matrix.org Foundation](https://matrix.org/foundation/)
 - [Matrix.org Foundation Trademark Policy](https://matrix.org/legal/trademark-policy/)
@@ -127,7 +142,7 @@ Complement is a later end-to-end homeserver gate. It does not replace the pure e
 
 CyborgHeart is an independent ProjectCyborg project. External fixture material retains its original provenance and license terms.
 
-## 7. Canonical foundational documents
+## 8. Canonical foundational documents
 
 | Document | Owns |
 |---|---|
@@ -143,8 +158,7 @@ CyborgHeart is an independent ProjectCyborg project. External fixture material r
 | [`DECISION-CODES.md`](./DECISION-CODES.md) | Stable machine-readable outcome taxonomy |
 | [`REFERENCES.md`](./REFERENCES.md) | External source index and documentation boundary |
 
-
-## 8. Completion and document boundary
+## 9. Completion and document boundary
 
 The foundational set is complete. No additional foundational document is currently required.
 
@@ -168,17 +182,18 @@ Their responsibilities already belong to the manifesto, working thesis, working 
 
 Further architectural decisions belong in focused ADRs under `../adr/` only when they materially change layer ownership, a public contract, protocol support, a Ruma workaround, or a significant infrastructure dependency.
 
-## 9. Supporting repository documents
+## 10. Supporting repository documents
 
 The public repository root owns `README.md`, `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`, `NOTICE.md`, and the dual-license texts. They govern the implementation repository but are not additions to the foundational architecture sequence. Private project-operations material may link to these files but must not maintain competing canonical copies.
 
-## 10. Maintenance
+## 11. Maintenance
 
 Update this index when:
 
 - the Matrix baseline or target room version changes;
 - Ruma or Rust baselines change;
 - a required external source is added or retired;
+- a comparative implementation reference becomes materially stale or misleading;
 - the canonical document set changes.
 
 When an external source changes a compatibility claim, update in the same pull request:
