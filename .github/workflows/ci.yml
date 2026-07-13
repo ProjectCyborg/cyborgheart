@@ -6,6 +6,10 @@ on:
   push:
     branches: [main, development]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -14,6 +18,7 @@ jobs:
     name: Main promotion policy
     if: github.event_name == 'pull_request' && github.base_ref == 'main'
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Require development branch source
         env:
@@ -33,17 +38,19 @@ jobs:
     name: Main full gates
     if: github.ref_name == 'main' || github.base_ref == 'main'
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - name: Checkout
         uses: actions/checkout@v7
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@1.97.0
+        uses: dtolnay/rust-toolchain@fa04a1451ff1842e2626ccb99004d0195b455a88
         with:
+          toolchain: 1.97.0
           components: clippy,rustfmt
 
       - name: Cache Cargo
-        uses: Swatinem/rust-cache@v2.9.1
+        uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4
 
       - name: Verify
         run: ./scripts/verify.sh
@@ -52,17 +59,19 @@ jobs:
     name: Development quick gates
     if: github.ref_name == 'development' || github.base_ref == 'development'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v7
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@1.97.0
+        uses: dtolnay/rust-toolchain@fa04a1451ff1842e2626ccb99004d0195b455a88
         with:
+          toolchain: 1.97.0
           components: clippy,rustfmt
 
       - name: Cache Cargo
-        uses: Swatinem/rust-cache@v2.9.1
+        uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4
 
       - name: Verify quick gate
         run: ./scripts/verify.sh --quick
@@ -75,17 +84,19 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-latest, windows-latest]
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v7
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@1.97.0
+        uses: dtolnay/rust-toolchain@fa04a1451ff1842e2626ccb99004d0195b455a88
         with:
+          toolchain: 1.97.0
           components: clippy,rustfmt
 
       - name: Cache Cargo
-        uses: Swatinem/rust-cache@v2.9.1
+        uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4
 
       - name: Test
         run: cargo test --workspace --all-targets --locked
